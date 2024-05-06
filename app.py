@@ -67,16 +67,16 @@ if uploaded_file1 and uploaded_file2:
         future_data = data[data['Date'] >= current_date]
 
         # Past KPIs
-        past_rn_discrepancy_abs = abs(past_data['RN_Difference'].sum())
-        past_revenue_discrepancy_abs = abs(past_data['Revenue_Difference'].sum())
-        past_rn_discrepancy_pct = abs(past_data['RN_Difference'].sum()) / past_data['RN_HF'].sum() * 100
-        past_revenue_discrepancy_pct = abs(past_data['Revenue_Difference'].sum()) / past_data['Revenue_HF'].sum() * 100
+        past_rn_discrepancy_abs = abs(abs(past_data['RN_Difference']).sum())
+        past_revenue_discrepancy_abs = abs(abs(past_data['Revenue_Difference']).sum())
+        past_rn_discrepancy_pct = abs(abs(past_data['RN_Difference']).sum()) / past_data['RN_HF'].sum() * 100
+        past_revenue_discrepancy_pct = abs(abs(past_data['Revenue_Difference']).sum()) / past_data['Revenue_HF'].sum() * 100
 
         # Future KPIs
-        future_rn_discrepancy_abs = abs(future_data['RN_Difference'].sum())
-        future_revenue_discrepancy_abs = abs(future_data['Revenue_Difference'].sum())
-        future_rn_discrepancy_pct = abs(future_data['RN_Difference'].sum()) / future_data['RN_HF'].sum() * 100
-        future_revenue_discrepancy_pct = abs(future_data['Revenue_Difference'].sum()) / future_data['Revenue_HF'].sum() * 100
+        future_rn_discrepancy_abs = abs(abs(future_data['RN_Difference']).sum())
+        future_revenue_discrepancy_abs = abs(abs(future_data['Revenue_Difference']).sum())
+        future_rn_discrepancy_pct = abs(abs(future_data['RN_Difference']).sum()) / future_data['RN_HF'].sum() * 100
+        future_revenue_discrepancy_pct = abs(abs(future_data['Revenue_Difference']).sum()) / future_data['Revenue_HF'].sum() * 100
 
          # Check for discrepancies
         rn_only_discrepancies = (filtered_data['RN_Difference'] != 0) & (filtered_data['Revenue_Difference'] == 0)
@@ -90,14 +90,14 @@ if uploaded_file1 and uploaded_file2:
         st.header(f"Accuracy Report for {parse_hotel_name(uploaded_file1.name)}")
         kpi_col1, kpi_col2 = st.columns(2)
         with kpi_col1:
-            st.subheader("Past Discrepancies")
+            st.subheader("Past")
             st.metric("RN Accuracy (%)", f"{100-past_rn_discrepancy_pct:.2f}%")
             st.metric("Revenue Accuracy (%)", f"{100-past_revenue_discrepancy_pct:.2f}%")
             st.metric("RN Discrepancy (Absolute)", f"{past_rn_discrepancy_abs} RNs")
             st.metric("Revenue Discrepancy (Absolute)", f"{past_revenue_discrepancy_abs}")
 
         with kpi_col2:
-            st.subheader("Future Discrepancies")
+            st.subheader("Future")
             st.metric("RN Accuracy (%)", f"{100-future_rn_discrepancy_pct:.2f}%")
             st.metric("Revenue Accuracy (%)", f"{100-future_revenue_discrepancy_pct:.2f}%")
             st.metric("RN Discrepancy (Absolute)", f"{future_rn_discrepancy_abs} RNs")
