@@ -42,7 +42,7 @@ st.title('Opera Cloud Discrepancy Checker')
 
 # File upload interface
 uploaded_file1 = st.file_uploader("Choose a Daily Totals file", type=['csv'])
-uploaded_file2 = st.file_uploader("Choose an Statistics file", type=['xlsx'])
+uploaded_file2 = st.file_uploader("Choose a Statistics file", type=['xlsx'])
 
 if uploaded_file1 and uploaded_file2:
 
