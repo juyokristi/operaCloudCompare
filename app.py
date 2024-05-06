@@ -78,6 +78,14 @@ if uploaded_file1 and uploaded_file2:
         future_rn_discrepancy_pct = abs(future_data['RN_Difference'].sum()) / future_data['RN_HF'].sum() * 100
         future_revenue_discrepancy_pct = abs(future_data['Revenue_Difference'].sum()) / future_data['Revenue_HF'].sum() * 100
 
+         # Check for discrepancies
+        rn_only_discrepancies = (filtered_data['RN_Difference'] != 0) & (filtered_data['Revenue_Difference'] == 0)
+        rev_only_discrepancies = (filtered_data['Revenue_Difference'] != 0) & (filtered_data['RN_Difference'] == 0)
+        if rn_only_discrepancies.any():
+            st.warning("Warning: There are Room Night discrepancies without corresponding Revenue discrepancies. Something may be off in the configuration or the logic of the code.")
+        if rev_only_discrepancies.any():
+            st.warning("Warning: There are Revenue discrepancies without corresponding Room Night discrepancies. Something may be off in the configuration or the logic of the code.")
+
         # Display KPIs
         st.header(f"Accuracy Report for {parse_hotel_name(uploaded_file1.name)}")
         kpi_col1, kpi_col2 = st.columns(2)
