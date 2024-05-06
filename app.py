@@ -19,12 +19,12 @@ def process_data(file1, file2):
                       data2[['occupancyDate', 'roomsSold', 'roomRevenue']],
                       left_on='arrivalDate', right_on='occupancyDate', how='inner')
     merged.drop('occupancyDate', axis=1, inplace=True)
-    merged.columns = ['Date', 'RN_Source1', 'Revenue_Source1', 'RN_Source2', 'Revenue_Source2']
+    merged.columns = ['Date', 'RN_Juyo', 'Revenue_Juyo', 'RN_HF', 'Revenue_HF']
     
     # Fill NaNs and calculate differences
     merged.fillna(0, inplace=True)
-    merged['RN_Difference'] = merged['RN_Source1'] - merged['RN_Source2']
-    merged['Revenue_Difference'] = round(merged['Revenue_Source1'] - merged['Revenue_Source2'], 2)
+    merged['RN_Difference'] = merged['RN_Juyo'] - merged['RN_HF']
+    merged['Revenue_Difference'] = round(merged['Revenue_Juyo'] - merged['Revenue_HF'], 2)
     
     return merged
 
@@ -69,14 +69,14 @@ if uploaded_file1 and uploaded_file2:
         # Past KPIs
         past_rn_discrepancy_abs = abs(past_data['RN_Difference'].sum())
         past_revenue_discrepancy_abs = abs(past_data['Revenue_Difference'].sum())
-        past_rn_discrepancy_pct = abs(past_data['RN_Difference'].sum()) / past_data['RN_Source2'].sum() * 100
-        past_revenue_discrepancy_pct = abs(past_data['Revenue_Difference'].sum()) / past_data['Revenue_Source2'].sum() * 100
+        past_rn_discrepancy_pct = abs(past_data['RN_Difference'].sum()) / past_data['RN_HF'].sum() * 100
+        past_revenue_discrepancy_pct = abs(past_data['Revenue_Difference'].sum()) / past_data['Revenue_HF'].sum() * 100
 
         # Future KPIs
         future_rn_discrepancy_abs = abs(future_data['RN_Difference'].sum())
         future_revenue_discrepancy_abs = abs(future_data['Revenue_Difference'].sum())
-        future_rn_discrepancy_pct = abs(future_data['RN_Difference'].sum()) / future_data['RN_Source2'].sum() * 100
-        future_revenue_discrepancy_pct = abs(future_data['Revenue_Difference'].sum()) / future_data['Revenue_Source2'].sum() * 100
+        future_rn_discrepancy_pct = abs(future_data['RN_Difference'].sum()) / future_data['RN_HF'].sum() * 100
+        future_revenue_discrepancy_pct = abs(future_data['Revenue_Difference'].sum()) / future_data['Revenue_HF'].sum() * 100
 
         # Display KPIs
         st.header(f"Accuracy Report for {parse_hotel_name(uploaded_file1.name)}")
@@ -95,10 +95,13 @@ if uploaded_file1 and uploaded_file2:
             st.metric("RN Discrepancy (Absolute)", f"{future_rn_discrepancy_abs} RNs")
             st.metric("Revenue Discrepancy (Absolute)", f"{future_revenue_discrepancy_abs:.2f}")
             
-
         # Display the DataFrame
         st.header("Detailed Report")
-        st.dataframe(filtered_data.style.applymap(lambda x: "background-color: yellow" if x != 0 else "", subset=['RN_Difference', 'Revenue_Difference']))
+        formatted_data = filtered_data.style.format({
+            'RN_Difference': "{:.0f}",
+            'Revenue_Difference': "{:.2f}"
+        }).applymap(lambda x: "background-color: yellow" if isinstance(x, (int, float)) and x != 0 else "", subset=['RN_Difference', 'Revenue_Difference'])
+        st.dataframe(formatted_data)
     else:
         st.error("Data could not be processed. Please check the file formats and contents.")
 else:
